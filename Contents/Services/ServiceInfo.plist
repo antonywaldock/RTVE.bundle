@@ -4,11 +4,11 @@
 <dict>
 	<key>URL</key>
 	<dict>
-		<key>BBC iPlayer Live</key>
+		<key>RTVE Live</key>
 		<dict>
 			<key>URLPatterns</key>
 			<array>
-				<string>^http:\/\/www\.bbc\.co.\uk\/iplayer\/live\/.+</string>
+				<string>^http:\/\/www\.rtve\.es\/directo\/.+</string>
 			</array>
 		</dict>
 	</dict>

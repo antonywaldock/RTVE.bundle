@@ -1,0 +1,75 @@
+RE_CHANNEL = Regex('directo/([^/]+)')
+RE_JSON = Regex('({"initialState":.+})\);')
+
+TV_CHANNEL_LOOKUP = {
+    "la-1": {"thumb_id" : "LA1", "url":"http://hlsliveamdgl7-lh.akamaihd.net/i/hlslive_1@583043/index_1500_av-p.m3u8?sd=10&rebase=on"},
+    "canal-24h": {"thumb_id" : "C24H", "url":"http://hlsliveamdgl8-lh.akamaihd.net/i/hlslive_1@583029/index_1500_av-p.m3u8?sd=10&rebase=on"}
+}
+
+##########################################################################################
+def NormalizeURL(url):
+
+    return url
+
+##########################################################################################
+def MetadataObjectForURL(url):
+
+    match = RE_CHANNEL.search(url)
+
+    if not match:
+        raise Ex.MediaNotAvailable
+
+    channel = match.groups()[0]
+
+    thumb_id = TV_CHANNEL_LOOKUP[channel]['thumb_id']
+
+    return VideoClipObject(
+        title = channel,
+        thumb = 'http://www.irtve.es/css/rtve.commons/rtve.multisign2014/custom/CTV_{0}/i/mosca_CTV_{0}.png'.format(thumb_id) 
+    )
+
+    raise Ex.LiveMediaNotStarted
+
+
+##########################################################################################
+@deferred
+def MediaObjectsForURL(url):
+
+    Log('Looking up media object for %s' %url)
+    match = RE_CHANNEL.search(url)
+
+    if not match:
+        raise Ex.MediaNotAvailable
+
+    channel = match.groups()[0]  
+    hls_url = TV_CHANNEL_LOOKUP[channel]['url']
+    
+    # Fix for Plex Web clients(avoid M3U8 cross domain access denied)
+    if Client.Product in ['Plex Web'] and Client.Platform not in ['Safari']:
+        return [
+            MediaObject(
+                parts = [
+                    PartObject(key=HTTPLiveStreamURL(Callback(PlayVideo, url=hls_url)))
+                ],
+                video_resolution = 720,
+                audio_channels = 1,
+                video_frame_rate = 25,
+                optimized_for_streaming = True
+            )
+        ]
+    else:
+        return [
+            MediaObject(
+                parts = [
+                    PartObject(key=HTTPLiveStreamURL(hls_url))
+                ],
+                video_resolution = 720,
+                audio_channels = 1,
+                video_frame_rate = 25,
+                optimized_for_streaming = True
+            )
+        ]
+
+##########################################################################################
+def PlayVideo(url):
+    return HTTP.Request(url).content

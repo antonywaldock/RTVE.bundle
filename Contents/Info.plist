@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleIdentifier</key>
-	<string>com.plexapp.plugins.iplayer</string>
+	<string>com.plexapp.plugins.rtve</string>
 	<key>PlexClientPlatforms</key>
 	<string>*</string>
 	<key>PlexFrameworkVersion</key>
@@ -11,6 +11,7 @@
 	<key>PlexPluginRegions</key>
 	<array>
 		<string>GB</string>
+		<string>ES</string>
 	</array>
 </dict>
 </plist>
